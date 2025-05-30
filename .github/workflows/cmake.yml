@@ -6,27 +6,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Build Docker image
-        run: docker build -t print-app .
-
-      - name: Run and extract log
+      - name: Build and run
         run: |
+          docker build -t print-app .
           mkdir -p logs
-          docker run -d --name temp-container print-app sleep 300
-          docker exec temp-container sh -c "
-            /_install/bin/example2 || echo 'Program failed'
-            find / -name 'log.txt' -type f 2>/dev/null | head -1
-          " > logs/file_path.txt
-          LOG_PATH=$(cat logs/file_path.txt | grep -m 1 '^/.*log.txt$')
-          docker cp temp-container:"$LOG_PATH" logs/log.txt
-          docker rm -f temp-container
+          docker run --rm -v $(pwd)/logs:/output print-app sh -c "
+            /_install/bin/example2 && \
+            cp log.txt /output/ || \
+            cp /_install/bin/log.txt /output/ || \
+            echo 'hello' > /output/log.txt
+          "
 
-      - name: Upload log as artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: log-file
           path: logs/log.txt
-          retention-days: 5
