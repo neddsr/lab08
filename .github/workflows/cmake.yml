@@ -1,11 +1,22 @@
-name: Docker
+name: Build and Publish Log
+
 on: [push]
+
 jobs:
-  Docker:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        
-      - name: Build Docker image
-        run: docker build -t logger .
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build in Docker
+      run: |
+        docker build -t print-app .
+        mkdir -p logs
+        docker run --rm -v $(pwd)/logs:/home/logs print-app /_install/bin/example2
+
+    - name: Upload log as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: log-file
+        path: logs/log.txt
