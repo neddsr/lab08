@@ -1,28 +1,27 @@
 name: Build and Publish Log
 
 on: [push]
-permissions:
-  contents: read
-  actions: write 
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Build in Docker
-      run: |
-        docker build -t print-app .
-        mkdir -p logs
-        docker run --name temp-container print-app /_install/bin/example2
-        docker cp temp-container:/_install/bin/log.txt logs/log.txt  # Копируем файл
-        docker rm temp-container
+      - name: Build Docker image
+        run: docker build -t print-app .
 
-    - name: Upload log as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: log-file
-        path: logs/log.txt
-        retention-days: 5 
+      - name: Run container and extract log
+        run: |
+          mkdir -p logs
+          docker run --name temp-container print-app /_install/bin/example2
+          docker cp temp-container:/_install/bin/log.txt logs/log.txt
+          docker rm temp-container
+
+      - name: Upload log as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-file
+          path: logs/log.txt
+          retention-days: 5
