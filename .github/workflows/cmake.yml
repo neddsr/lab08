@@ -12,18 +12,17 @@ jobs:
       - name: Build Docker image
         run: docker build -t print-app .
 
-      - name: Find and copy log file
+      - name: Run and extract log
         run: |
           mkdir -p logs
-          docker run --name temp-container print-app sh -c "
-            /_install/bin/example2 && 
-            echo 'Поиск log.txt...' && 
-            find / -name 'log.txt' -type f 2>/dev/null
+          docker run -d --name temp-container print-app sleep 300
+          docker exec temp-container sh -c "
+            /_install/bin/example2 || echo 'Program failed'
+            find / -name 'log.txt' -type f 2>/dev/null | head -1
           " > logs/file_path.txt
-          LOG_PATH=$(cat logs/file_path.txt | grep -m 1 '/log.txt')
-          cp temp-container:$LOG_PATH logs/log.txt
-          docker rm temp-container
-
+          LOG_PATH=$(cat logs/file_path.txt | grep -m 1 '^/.*log.txt$')
+          docker cp temp-container:"$LOG_PATH" logs/log.txt
+          docker rm -f temp-container
 
       - name: Upload log as artifact
         uses: actions/upload-artifact@v4
