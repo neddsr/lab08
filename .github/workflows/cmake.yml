@@ -1,7 +1,10 @@
 name: Build and Publish Log
 
 on: [push]
-
+permissions:
+  contents: read
+  actions: write 
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,7 +19,8 @@ jobs:
         docker run --rm -v $(pwd)/logs:/home/logs print-app /_install/bin/example2
 
     - name: Upload log as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: log-file
         path: logs/log.txt
+        retention-days: 5 
