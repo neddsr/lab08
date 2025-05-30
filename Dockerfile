@@ -16,4 +16,4 @@ VOLUME /home/logs
 
 WORKDIR _install/bin
 
-ENTRYPOINT ./hello_world
+ENTRYPOINT ./example2
