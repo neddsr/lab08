@@ -1,9 +1,9 @@
 #include <print.hpp>
-
 #include <fstream>
 
-int main(int argc, char** argv)
+int main(int, char**) 
 {
-  std::ofstream file("log.txt");
-  print(std::string("hello"), file);
+    std::ofstream file("/home/logs/log.txt");
+    print(std::string("hello"), file);
+    return 0;
 }
