@@ -16,7 +16,9 @@ jobs:
       run: |
         docker build -t print-app .
         mkdir -p logs
-        docker run --rm -v $(pwd)/logs:/home/logs print-app /_install/bin/example2
+        docker run --name temp-container print-app /_install/bin/example2
+        docker cp temp-container:/_install/bin/log.txt logs/log.txt  # Копируем файл
+        docker rm temp-container
 
     - name: Upload log as artifact
       uses: actions/upload-artifact@v4
