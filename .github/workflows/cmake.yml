@@ -16,7 +16,7 @@ jobs:
         docker run --rm -v $(pwd)/logs:/home/logs print-app /_install/bin/example2
 
     - name: Upload log as artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: log-file
         path: logs/log.txt
