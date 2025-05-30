@@ -16,7 +16,7 @@ jobs:
       run: |
         docker build -t print-app .
         mkdir -p logs
-        docker run --rm -v $(pwd)/logs:/home/logs print-app /_install/bin/example2
+        docker run --rm -v $(pwd)/logs:/app print-app /_install/bin/example2
 
     - name: Upload log as artifact
       uses: actions/upload-artifact@v4
