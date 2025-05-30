@@ -12,12 +12,7 @@ jobs:
         run: |
           docker build -t print-app .
           mkdir -p logs
-          docker run --rm -v $(pwd)/logs:/output print-app sh -c "
-            /_install/bin/example2 && \
-            cp log.txt /output/ || \
-            cp /_install/bin/log.txt /output/ || \
-            echo 'hello' > /output/log.txt
-          "
+          docker run --rm -v $(pwd)/logs:/home/logs print-app /_install/bin/example2
 
       - uses: actions/upload-artifact@v4
         with:
